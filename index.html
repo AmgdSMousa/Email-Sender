@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مرسل الإيميلات المتقدم</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .file-input {
+            border: 2px dashed #ddd;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .file-input:hover {
+            border-color: #4CAF50;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-stop {
+            background: linear-gradient(45deg, #f44336, #d32f2f);
+        }
+
+        .status-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .pending { color: #ff9800; }
+
+        .log-container {
+            height: 300px;
+            overflow-y: auto;
+            background: #1e1e1e;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .log-entry {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            color: white;
+        }
+
+        .log-success {
+            background: rgba(76, 175, 80, 0.3);
+            color: #4CAF50;
+        }
+
+        .log-error {
+            background: rgba(244, 67, 54, 0.3);
+            color: #f44336;
+        }
+
+        .log-info {
+            background: rgba(33, 150, 243, 0.3);
+            color: #2196F3;
+        }
+
+        .email-preview {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .email-list {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            max-height: 150px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📧 مرسل الإيميلات المتقدم</h1>
+            <p>أرسل إيميلاتك مع مرفقات PDF وتتبع حالة الإرسال في الوقت الفعلي</p>
+        </div>
+
+        <div class="main-content">
+            <!-- نموذج الإعدادات -->
+            <div class="form-section">
+                <div class="alert alert-warning">
+                    ⚠️ تأكد من إعدادات SMTP الصحيحة قبل البدء. استخدم App Password للـ Gmail.
+                </div>
+
+                <h3 style="margin-bottom: 20px; color: #333;">⚙️ إعدادات SMTP</h3>
+                
+                <div class="form-group">
+                    <label for="smtpServer">خادم SMTP:</label>
+                    <select id="smtpServer">
+                        <option value="smtp.gmail.com:587">Gmail (smtp.gmail.com:587)</option>
+                        <option value="smtp.yahoo.com:587">Yahoo (smtp.yahoo.com:587)</option>
+                        <option value="smtp.outlook.com:587">Outlook (smtp.outlook.com:587)</option>
+                        <option value="custom">خادم مخصص</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="customServer" style="display: none;">
+                    <label for="customSmtp">عنوان الخادم المخصص:</label>
+                    <input type="text" id="customSmtp" placeholder="smtp.example.com:587">
+                </div>
+
+                <div class="form-group">
+                    <label for="senderName">اسم المرسل:</label>
+                    <input type="text" id="senderName" placeholder="الاسم الذي سيظهر للمستلم" value="المرسل الافتراضي">
+                </div>
+
+                <div class="form-group">
+                    <label for="senderEmail">الإيميل المرسل:</label>
+                    <input type="email" id="senderEmail" placeholder="your-email@gmail.com" value="test@example.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="senderPassword">كلمة المرور:</label>
+                    <input type="password" id="senderPassword" placeholder="كلمة مرور التطبيق" value="********">
+                </div>
+
+                <h3 style="margin: 30px 0 20px 0; color: #333;">📝 محتوى الرسالة</h3>
+
+                <div class="form-group">
+                    <label for="emailSubject">موضوع الرسالة:</label>
+                    <input type="text" id="emailSubject" placeholder="موضوع الرسالة" value="رسالة تجريبية">
+                </div>
+
+                <div class="form-group">
+                    <label for="emailBody">نص الرسالة (HTML مدعوم):</label>
+                    <textarea id="emailBody" rows="6" placeholder="اكتب محتوى رسالتك هنا...">مرحباً،
+
+هذه رسالة تجريبية من نظام إرسال الإيميلات.
+
+مع تحياتي،
+فريق العمل</textarea>
+                </div>
+
+                <h3 style="margin: 30px 0 20px 0; color: #333;">📎 مرفق PDF (اختياري)</h3>
+
+                <div class="form-group">
+                    <div class="file-input" onclick="document.getElementById('pdfFile').click()">
+                        <input type="file" id="pdfFile" accept=".pdf" style="display: none;">
+                        <p>📄 اختر ملف PDF للإرفاق</p>
+                        <p style="font-size: 14px; color: #666; margin-top: 10px;">الحد الأقصى: 10 ميجابايت</p>
+                    </div>
+                </div>
+
+                <div id="pdfPreview" class="email-list" style="display: none;">
+                    <div style="font-weight: bold; margin-bottom: 10px;">الملف المرفق:</div>
+                    <div id="pdfInfo"></div>
+                </div>
+
+                <h3 style="margin: 30px 0 20px 0; color: #333;">📋 قائمة الإيميلات</h3>
+
+                <div class="form-group">
+                    <div class="file-input" onclick="document.getElementById('emailFile').click()">
+                        <input type="file" id="emailFile" accept=".txt" style="display: none;">
+                        <p>📄 اختر ملف النصوص (.txt)</p>
+                        <p style="font-size: 14px; color: #666; margin-top: 10px;">كل إيميل في سطر منفصل</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="manualEmails">أو أدخل الإيميلات يدوياً:</label>
+                    <textarea id="manualEmails" rows="4" placeholder="test1@example.com&#10;test2@example.com&#10;test3@example.com">test1@example.com
+test2@example.com
+test3@example.com</textarea>
+                </div>
+
+                <div id="emailListPreview" class="email-list" style="display: none;">
+                    <div style="font-weight: bold; margin-bottom: 10px;">الإيميلات المحملة:</div>
+                    <div id="emailListContent"></div>
+                </div>
+
+                <button class="btn" id="startSending" onclick="startSending()">
+                    🚀 بدء الإرسال
+                </button>
+
+                <button class="btn btn-stop" id="stopSending" onclick="stopSending()" style="display: none;">
+                    ⏹️ إيقاف الإرسال
+                </button>
+            </div>
+
+            <!-- قسم المتابعة -->
+            <div class="status-section">
+                <h3 style="margin-bottom: 20px; color: #333;">📊 حالة الإرسال</h3>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number success" id="successCount">0</div>
+                        <div>تم الإرسال</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number error" id="errorCount">0</div>
+                        <div>فشل</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number pending" id="totalCount">0</div>
+                        <div>الإجمالي</div>
+                    </div>
+                </div>
+
+                <h4 style="margin-bottom: 15px; color: #333;">📜 سجل العمليات</h4>
+                <div class="log-container" id="logContainer">
+                    <div class="log-entry log-info">
+                        [النظام] مرحباً! اختر ملف الإيميلات وأدخل إعداداتك لبدء الإرسال
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let emailList = [];
+        let pdfAttachment = null;
+        let isRunning = false;
+        let shouldStop = false;
+        let currentIndex = 0;
+
+        // إعدادات SMTP
+        document.getElementById('smtpServer').addEventListener('change', function() {
+            const customServer = document.getElementById('customServer');
+            if (this.value === 'custom') {
+                customServer.style.display = 'block';
+            } else {
+                customServer.style.display = 'none';
+            }
+        });
+
+        // تحميل ملف الإيميلات
+        document.getElementById('emailFile').addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (file && file.type === 'text/plain') {
+                const formData = new FormData();
+                formData.append('emailFile', file);
+
+                try {
+                    addLogEntry('info', 'جاري تحميل ملف الإيميلات...');
+                    const response = await fetch('/upload-emails', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        emailList = result.emails;
+                        updateEmailDisplay();
+                        updateStats();
+                        addLogEntry('success', result.message);
+                    } else {
+                        addLogEntry('error', result.message);
+                    }
+                } catch (error) {
+                    // في حالة عدم وجود خادم، استخدم الطريقة المحلية
+                    addLogEntry('info', 'الخادم غير متاح، تحميل محلي...');
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const content = e.target.result;
+                        processEmailList(content);
+                    };
+                    reader.readAsText(file);
+                }
+            } else {
+                addLogEntry('error', 'يرجى اختيار ملف نصي صحيح (.txt)');
+            }
+        });
+
+        // متابعة تغيير النص اليدوي
+        document.getElementById('manualEmails').addEventListener('input', function() {
+            const content = this.value;
+            if (content.trim()) {
+                processEmailList(content);
+            } else {
+                emailList = [];
+                updateEmailDisplay();
+                updateStats();
+            }
+        });
+
+        // تحميل ملف PDF
+        document.getElementById('pdfFile').addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (file && file.type === 'application/pdf') {
+                if (file.size > 10 * 1024 * 1024) {
+                    addLogEntry('error', 'حجم الملف كبير جداً. الحد الأقصى 10 ميجابايت');
+                    this.value = '';
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('pdfFile', file);
+
+                try {
+                    addLogEntry('info', 'جاري رفع ملف PDF...');
+                    const response = await fetch('/upload-pdf', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        pdfAttachment = result;
+                        displayPdfPreview();
+                        addLogEntry('success', result.message);
+                    } else {
+                        addLogEntry('error', result.message);
+                        this.value = '';
+                    }
+                } catch (error) {
+                    // في حالة عدم وجود خادم
+                    addLogEntry('error', 'الخادم غير متاح. لا يمكن رفع ملفات PDF بدون خادم');
+                    this.value = '';
+                }
+            } else {
+                addLogEntry('error', 'يرجى اختيار ملف PDF صحيح');
+                this.value = '';
+            }
+        });
+
+        function processEmailList(content) {
+            const emails = content.split('\n')
+                .map(email => email.trim())
+                .filter(email => email && isValidEmail(email));
+
+            emailList = [...new Set(emails)]; // إزالة المكررات
+            updateEmailDisplay();
+            updateStats();
+
+            if (emailList.length > 0) {
+                addLogEntry('success', `تم تحميل ${emailList.length} إيميل بنجاح`);
+            } else {
+                addLogEntry('error', 'لم يتم العثور على إيميلات صحيحة في النص');
+            }
+        }
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function updateEmailDisplay() {
+            const preview = document.getElementById('emailListPreview');
+            const content = document.getElementById('emailListContent');
+            
+            if (emailList.length > 0) {
+                preview.style.display = 'block';
+                content.innerHTML = emailList.slice(0, 10).map((email, index) => 
+                    `<div style="padding: 2px 0;">${index + 1}. ${email}</div>`
+                ).join('');
+                
+                if (emailList.length > 10) {
+                    content.innerHTML += `<div style="padding: 2px 0; color: #666;">... و ${emailList.length - 10} إيميل آخر</div>`;
+                }
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+
+        function displayPdfPreview() {
+            const preview = document.getElementById('pdfPreview');
+            const info = document.getElementById('pdfInfo');
+            
+            if (pdfAttachment) {
+                preview.style.display = 'block';
+                const sizeInMB = (pdfAttachment.size / (1024 * 1024)).toFixed(2);
+                info.innerHTML = `
+                    <div style="padding: 8px; background: #e8f5e8; border-radius: 5px;">
+                        <div>📄 <strong>${pdfAttachment.name}</strong></div>
+                        <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                            الحجم: ${sizeInMB} ميجابايت
+                        </div>
+                    </div>
+                `;
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('totalCount').textContent = emailList.length;
+        }
+
+        function addLogEntry(type, message) {
+            const logContainer = document.getElementById('logContainer');
+            const timestamp = new Date().toLocaleTimeString('ar-EG');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${timestamp}] ${message}`;
+            
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        function validateForm() {
+            const senderEmail = document.getElementById('senderEmail').value;
+            const senderPassword = document.getElementById('senderPassword').value;
+            const emailSubject = document.getElementById('emailSubject').value;
+            const emailBody = document.getElementById('emailBody').value;
+
+            if (!senderEmail || !senderPassword || !emailSubject || !emailBody) {
+                addLogEntry('error', 'يرجى ملء جميع الحقول المطلوبة');
+                return false;
+            }
+
+            if (!isValidEmail(senderEmail)) {
+                addLogEntry('error', 'عنوان الإيميل المرسل غير صحيح');
+                return false;
+            }
+
+            if (emailList.length === 0) {
+                addLogEntry('error', 'يرجى إضافة قائمة إيميلات أولاً');
+                return false;
+            }
+
+            return true;
+        }
+
+        async function startSending() {
+            if (!validateForm() || isRunning) return;
+
+            const smtpConfig = getSmtpConfig();
+            const emailContent = getEmailContent();
+
+            try {
+                addLogEntry('info', 'جاري بدء عملية الإرسال...');
+                
+                const response = await fetch('/send-emails', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        smtpConfig: smtpConfig,
+                        emailContent: emailContent,
+                        emailList: emailList,
+                        pdfAttachment: pdfAttachment
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    isRunning = true;
+                    
+                    const startButton = document.getElementById('startSending');
+                    const stopButton = document.getElementById('stopSending');
+                    
+                    startButton.style.display = 'none';
+                    stopButton.style.display = 'block';
+
+                    // بدء مراقبة الحالة
+                    statusInterval = setInterval(checkSendingStatus, 1000);
+                    
+                    addLogEntry('success', result.message);
+                } else {
+                    addLogEntry('error', result.message);
+                }
+
+            } catch (error) {
+                addLogEntry('error', 'الخادم غير متاح. جاري التشغيل في الوضع المحلي...');
+                // تشغيل محلي كـ fallback
+                await startLocalSending();
+            }
+        }
+
+        async function startLocalSending() {
+            isRunning = true;
+            shouldStop = false;
+            currentIndex = 0;
+            
+            const startButton = document.getElementById('startSending');
+            const stopButton = document.getElementById('stopSending');
+            
+            startButton.style.display = 'none';
+            stopButton.style.display = 'block';
+
+            // إعادة تعيين الإحصائيات
+            document.getElementById('successCount').textContent = '0';
+            document.getElementById('errorCount').textContent = '0';
+            document.getElementById('progressFill').style.width = '0%';
+
+            addLogEntry('info', `بدء إرسال ${emailList.length} إيميل في الوضع المحلي...`);
+            addLogEntry('warning', 'تنبيه: الإرسال المحلي لا يرسل إيميلات حقيقية');
+
+            // بدء عملية الإرسال المحاكية
+            await sendEmailsSequentially();
+        }
+
+        function getSmtpConfig() {
+            const smtpServer = document.getElementById('smtpServer').value;
+            const customSmtp = document.getElementById('customSmtp').value;
+            const senderEmail = document.getElementById('senderEmail').value;
+            const senderPassword = document.getElementById('senderPassword').value;
+            
+            let host, port;
+            if (smtpServer === 'custom') {
+                const parts = customSmtp.split(':');
+                host = parts[0];
+                port = parseInt(parts[1]) || 587;
+            } else {
+                const parts = smtpServer.split(':');
+                host = parts[0];
+                port = parseInt(parts[1]);
+            }
+
+            return {
+                host: host,
+                port: port,
+                email: senderEmail,
+                password: senderPassword
+            };
+        }
+
+        function getEmailContent() {
+            return {
+                senderName: document.getElementById('senderName').value || 'المرسل',
+                subject: document.getElementById('emailSubject').value,
+                body: document.getElementById('emailBody').value
+            };
+        }
+
+        async function checkSendingStatus() {
+            try {
+                const response = await fetch('/sending-status');
+                const status = await response.json();
+
+                updateStatsFromServer(status);
+
+                if (!status.isRunning && isRunning) {
+                    // انتهت العملية
+                    isRunning = false;
+                    clearInterval(statusInterval);
+                    
+                    const startButton = document.getElementById('startSending');
+                    const stopButton = document.getElementById('stopSending');
+                    
+                    startButton.style.display = 'block';
+                    stopButton.style.display = 'none';
+                }
+
+            } catch (error) {
+                // في حالة عدم توفر الخادم
+                console.log('الخادم غير متاح، التشغيل محلياً');
+            }
+        }
+
+        function updateStatsFromServer(status) {
+            document.getElementById('successCount').textContent = status.sent;
+            document.getElementById('errorCount').textContent = status.failed;
+            document.getElementById('totalCount').textContent = status.total;
+            
+            const progress = status.total > 0 ? ((status.sent + status.failed) / status.total) * 100 : 0;
+            document.getElementById('progressFill').style.width = progress + '%';
+
+            // تحديث السجلات
+            status.logs.forEach((log, index) => {
+                const existingEntry = document.querySelector(`[data-log-index="${index}"]`);
+                if (!existingEntry) {
+                    const entry = document.createElement('div');
+                    entry.className = `log-entry log-${log.type}`;
+                    entry.setAttribute('data-log-index', index);
+                    entry.textContent = `[${log.timestamp}] ${log.message}`;
+                    document.getElementById('logContainer').appendChild(entry);
+                }
+            });
+
+            // تحريك التمرير لأسفل
+            const logContainer = document.getElementById('logContainer');
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        async function sendEmailsSequentially() {
+            let successCount = 0;
+            let errorCount = 0;
+
+            for (let i = 0; i < emailList.length && !shouldStop; i++) {
+                const email = emailList[i];
+                currentIndex = i;
+
+                addLogEntry('info', `إرسال إلى: ${email}`);
+
+                // محاكاة عملية الإرسال
+                const success = await simulateEmailSending(email);
+                
+                if (success) {
+                    successCount++;
+                    addLogEntry('success', `✅ تم الإرسال بنجاح إلى: ${email}`);
+                } else {
+                    errorCount++;
+                    addLogEntry('error', `❌ فشل الإرسال إلى: ${email}`);
+                }
+
+                // تحديث الإحصائيات والتقدم
+                document.getElementById('successCount').textContent = successCount;
+                document.getElementById('errorCount').textContent = errorCount;
+                
+                const progress = ((i + 1) / emailList.length) * 100;
+                document.getElementById('progressFill').style.width = progress + '%';
+
+                // تأخير بين الرسائل
+                if (i < emailList.length - 1 && !shouldStop) {
+                    await simulateDelay(1500);
+                }
+            }
+
+            // انتهاء العملية
+            finishSending(successCount, errorCount);
+        }
+
+        async function simulateEmailSending(email) {
+            // محاكاة عملية الإرسال مع احتمالية نجاح 85%
+            await simulateDelay(1000 + Math.random() * 2000);
+            return Math.random() > 0.15; // 85% نجاح
+        }
+
+        function simulateDelay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function finishSending(successCount, errorCount) {
+            isRunning = false;
+            shouldStop = false;
+            
+            const startButton = document.getElementById('startSending');
+            const stopButton = document.getElementById('stopSending');
+            
+            startButton.style.display = 'block';
+            stopButton.style.display = 'none';
+            startButton.disabled = false;
+
+            if (shouldStop) {
+                addLogEntry('info', `🛑 تم إيقاف العملية بواسطة المستخدم. نجح: ${successCount}, فشل: ${errorCount}`);
+            } else {
+                addLogEntry('info', `🎉 انتهت عملية الإرسال! نجح: ${successCount}, فشل: ${errorCount}`);
+            }
+        }
+
+        async function stopSending() {
+            try {
+                const response = await fetch('/stop-sending', {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    addLogEntry('info', result.message);
+                }
+
+            } catch (error) {
+                // fallback للوضع المحلي
+                shouldStop = true;
+                addLogEntry('info', 'جاري إيقاف عملية الإرسال...');
+            }
+        }
+
+        // تهيئة أولية
+        updateStats();
+        processEmailList(document.getElementById('manualEmails').value);
+        
+        // رسالة ترحيب
+        addLogEntry('info', 'مرحباً! النظام جاهز لإرسال الإيميلات');
+        addLogEntry('info', 'تأكد من تشغيل الخادم على المنفذ 3000 للإرسال الحقيقي');
+    </script>
+</body>
+</html>
